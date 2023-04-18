@@ -1,0 +1,12 @@
+*.log
+products.json
+node_modules
+.vscode
+scripts
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
