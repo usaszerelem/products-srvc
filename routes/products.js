@@ -9,6 +9,8 @@ const AppLogger = require('../utils/logger.js');
 const logger = new AppLogger(module);
 const _ = require('underscore');
 const short = require('short-uuid');
+const audit = require('../utils/audit');
+const constants = require('../utils/constants.js');
 
 // -------------------------------------------------
 
@@ -38,9 +40,17 @@ router.post('/', [userAuth, prodCanUpsert], async (req,res) => {
 
         let product = new Product( _.pick(req.body, fieldNames));
         product.productId = short.generate();
+
         await product.save();
+
         logger.info("Product was added. ProductID: " + product.productId);
         logger.debug(JSON.stringify(product));
+
+        // If auditing is enabled for this user, then audit this call
+        if (req.user.audit === true) {
+            audit.create(req.user.userId, constants.OP_PROD_UPSERT,
+                        "POST", JSON.stringify(product));
+        }
 
         return res.status(200).json(product);
     } catch(ex) {
@@ -86,8 +96,16 @@ router.put('/', [userAuth, prodCanUpsert], async (req,res) => {
         // Everything checks out. Save the product and return
         // update product JSON node
         await product.save();
+
         logger.info("Product was updated. ProductID: " + product.productId);
         logger.debug(JSON.stringify(product));
+
+        // If auditing is enabled for this user, then audit this call
+        if (req.user.audit === true) {
+            audit.create(req.user.userId, constants.OP_PROD_UPSERT,
+                        "PUT", JSON.stringify(product));
+        }
+
         return res.status(200).json(product);
 
     } catch(ex) {
@@ -145,6 +163,16 @@ router.patch('/', [userAuth, prodCanUpsert], async (req,res) => {
         // Everything checks out. Save the product and return
         // update product JSON node
         await product.save();
+
+        logger.info("Product was patched. ProductID: " + product.productId);
+        logger.debug(JSON.stringify(product));
+
+        // If auditing is enabled for this user, then audit this call
+        if (req.user.audit === true) {
+            audit.create(req.user.userId, constants.OP_PROD_UPSERT,
+                        "PATCH", JSON.stringify(product));
+        }
+
         return res.status(200).json(product);
     } catch(ex) {
         logger.error(ex);
@@ -172,6 +200,13 @@ router.get('/', [userAuth, prodCanList], async (req,res) => {
 
             if (_.isUndefined(product) === false) {
                 logger.info('Success! Returning: ' + JSON.stringify(product));
+
+                // If auditing is enabled for this user, then audit this call
+                if (req.user.audit === true) {
+                    audit.create(req.user.userId, constants.OP_PROD_LIST,
+                                "GET", JSON.stringify(product));
+                }
+
                 return res.status(200).json(product);
             } else {
                 let retStr = `Product not found. User ID ${req.query.id}`;
@@ -203,6 +238,13 @@ router.get('/', [userAuth, prodCanList], async (req,res) => {
                 products,
                 lastKey
             };
+
+            // If auditing is enabled for this user, then audit this call
+            if (req.user.audit === true) {
+                audit.create(req.user.userId, constants.OP_PROD_LIST,
+                            "GET", JSON.stringify(mergeObj));
+            }
+
             return res.status(200).json(mergeObj);
         }
 
@@ -233,7 +275,15 @@ router.delete('/', [userAuth, prodCanDelete], async (req,res) => {
             return res.status(404).send('Not found');
         } else {
             await Product.delete(req.query.productId);
+
             logger.info(`Product deleted ${req.query.productId}`);
+
+            // If auditing is enabled for this user, then audit this call
+            if (req.user.audit === true) {
+                audit.create(req.user.userId, constants.OP_PROD_DELETE,
+                                "DELETE", JSON.stringify(mergeObj));
+            }
+
             return res.status(200).send('Success');
         }
     } catch(ex) {

@@ -1,5 +1,4 @@
 const dynamoose = require('dynamoose');
-//const nanoid = require('nanoid');
 const short = require('short-uuid');
 const Joi = require('joi');
 
@@ -94,7 +93,7 @@ const productSchema = new dynamoose.Schema({
     isValidUPC: {
         type: Boolean,
         required: true
-    },
+    }
 });
 
 // ---------------------------------------------------------------------------

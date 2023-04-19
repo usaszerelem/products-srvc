@@ -11,7 +11,7 @@ const constants = require('../utils/constants.js');
 async function userCanList(req, res, next) {
     try {
         if ( _.isUndefined(req.user.operations) === false &&
-            !req.user.operations.includes(constants.USER_LIST)) {
+            !req.user.operations.includes(constants.OP_USER_LIST)) {
             const msg = 'Forbidden reading users';
             logger.error(msg);
             return res.status(403).send(msg);

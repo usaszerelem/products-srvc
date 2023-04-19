@@ -12,7 +12,7 @@ async function userCanUpsert(req, res, next) {
 
     try {
         if ( _.isUndefined(req.user.operations) === false &&
-            !req.user.operations.includes(constants.USER_UPSERT)) {
+            !req.user.operations.includes(constants.OP_USER_UPSERT)) {
             const msg = 'Forbidden upserting users';
             logger.error(msg);
             return res.status(403).send(msg);

@@ -1,5 +1,4 @@
 const dynamoose = require('dynamoose');
-//const nanoid = require('nanoid');
 const short = require('short-uuid');
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
@@ -19,6 +18,13 @@ const PASSWORD_MIN_LENGTH = 5;
 const PASSWORD_MAX_LENGTH = 1024;
 
 // ----------------------------------------------------------------
+// userId - random GUID type of identifier
+// firstName - User's first name
+// lastName - User's last name
+// email - Used as unique field for authentication
+// password - Used with email for authentication
+// operations - Allowed operations for this user. See utils/constants.js
+// audit - whether activities performed by this user are audited
 
 const userSchema = new dynamoose.Schema({
     userId: {
@@ -46,6 +52,10 @@ const userSchema = new dynamoose.Schema({
     operations: {
         type: Array,
         schema: [{type: String}]
+    },
+    audit: {
+        type: Boolean,
+        required: true
     }
 });
 
@@ -56,7 +66,7 @@ const userSchema = new dynamoose.Schema({
 
 function generateAuthToken(user) {
     const token = jwt.sign(
-        { userId: user.userId, operations: user.operations},
+        { userId: user.userId, operations: user.operations, audit: user.audit},
         process.env.JWT_PRIVATE_KEY,
         {expiresIn: process.env.JWT_EXPIRATION}
         );
@@ -76,6 +86,7 @@ function validateUser(user) {
         lastName: Joi.string().min(LNAME_MIN_LENGTH).max(LNAME_MAX_LENGTH).required(),
         email: Joi.string().min(EMAIL_MIN_LENGTH).max(EMAIL_MAX_LENGTH).required().email(),
         password: Joi.string().min(PASSWORD_MIN_LENGTH).max(PASSWORD_MAX_LENGTH).required(),
+        audit: Joi.boolean().required(),
         operations: Joi.array().items(Joi.string())
     }).options({allowUnknown: false});
 

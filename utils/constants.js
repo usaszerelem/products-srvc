@@ -1,19 +1,20 @@
 // ----------------------------------------------------------------
 // Authorized operations that can be performed
-/*
-const USER_UPSERT = "UserUpsert";   // Add/Update
-const USER_DELETE = "UserDelete";
-const USER_LIST   = "UserList";
-const PROD_UPSERT = "ProdUpsert";   // Add/Update
-const PROD_DELETE = "ProdDelete";
-const PROD_LIST   = "ProdList";
-*/
 
 module.exports = Object.freeze({
-    USER_UPSERT: 'UserUpsert',      // User Create, update
-    USER_DELETE: 'UserDelete',      // User Delete
-    USER_LIST: 'UserList',          // User get, list
-    PROD_UPSERT: 'ProdUpsert',      // Product Create, update
-    PROD_DELETE: 'ProdDelete',      // Product Delete
-    PROD_LIST: 'ProdList'           // Product get, list
+    OP_USER_UPSERT: 'UserUpsert',      // User Create, update
+    OP_USER_DELETE: 'UserDelete',      // User Delete
+    OP_USER_LIST: 'UserList',          // User get, list
+    OP_PROD_UPSERT: 'ProdUpsert',      // Product Create, update
+    OP_PROD_DELETE: 'ProdDelete',      // Product Delete
+    OP_PROD_LIST: 'ProdList',           // Product get, list
+
+    METHOD_LENGTH_MIN: 3,
+    METHOD_LENGTH_MAX: 7,
+    TIMESTAMP_LENGTH: 24,
+    ID_LENGTH: 22,
+
+    AUDIT_OPERATION_LENGTH_MIN: 5,
+    AUDIT_OPERATION_LENGTH_MAX: 12,
+    AUDIT_DATA_MAX_LENGTH: 4000
 });

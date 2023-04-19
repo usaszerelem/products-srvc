@@ -11,7 +11,7 @@ const constants = require('../utils/constants.js');
 async function userCanDelete(req, res, next) {
     try {
         if ( _.isUndefined(req.user.operations) === false &&
-            !req.user.operations.includes(constants.USER_DELETE)) {
+            !req.user.operations.includes(constants.OP_USER_DELETE)) {
             const msg = 'Forbidden deleting users';
             logger.error(msg);
             return res.status(403).send(msg);

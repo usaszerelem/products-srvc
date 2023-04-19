@@ -11,7 +11,7 @@ const constants = require('../utils/constants.js');
 async function prodCanDelete(req, res, next) {
     try {
         if ( _.isUndefined(req.user.operations) === false &&
-            !req.user.operations.includes(constants.PROD_DELETE)) {
+            !req.user.operations.includes(constants.OP_PROD_DELETE)) {
             const msg = 'Forbidden deleting products';
             logger.error(msg);
             return res.status(403).send(msg);

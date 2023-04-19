@@ -11,7 +11,7 @@ const constants = require('../utils/constants.js');
 async function prodCanList(req, res, next) {
     try {
         if ( _.isUndefined(req.user.operations) === false &&
-            !req.user.operations.includes(constants.PROD_LIST)) {
+            !req.user.operations.includes(constants.OP_PROD_LIST)) {
             const msg = 'Forbidden reading products';
             logger.error(msg);
             return res.status(403).send(msg);

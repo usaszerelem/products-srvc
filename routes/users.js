@@ -9,6 +9,7 @@ const {hashPassword} = require('../utils/hash.js');
 const userAuth = require('../middleware/userAuth');
 const userCanUpsert = require('../middleware/userCanUpsert.js');
 const userCanList = require('../middleware/userCanList.js');
+const audit = require('../utils/audit');
 
 // ---------------------------------------------------------------------------
 // Create (register) a new user. This is a functionality exposed only to
@@ -46,6 +47,12 @@ router.post('/', [userAuth, userCanUpsert], async (req,res) => {
         logger.info("User was added. UserID: " + user.userId);
         logger.debug(JSON.stringify(user));
 
+        // If auditing is enabled for this user, then audit this call
+        if (req.user.audit === true) {
+            audit.create(req.user.userId, constants.OP_USER_UPSERT,
+                        "POST", JSON.stringify(user));
+        }
+
         return res.status(200).json(_.omit(user, 'password'));
     } catch(ex) {
         logger.error(ex);
@@ -66,6 +73,12 @@ router.get('/me', userAuth, async (req,res) => {
             const errMsg = `User with ID ${req.user.userId} was not found`;
             console.warn(errMsg);
             return res.status(400).send(errMsg);
+        }
+
+        // If auditing is enabled for this user, then audit this call
+        if (req.user.audit === true) {
+            audit.create(req.user.userId, constants.OP_USER_LIST,
+                         "GET", JSON.stringify(user));
         }
 
         return res.status(200).json(_.omit(user, 'password'));
@@ -107,6 +120,12 @@ router.get('/', [userAuth, userCanList], async (req,res) => {
         logger.info("User found: " + user.userId);
         logger.debug(JSON.stringify(user));
 
+        // If auditing is enabled for this user, then audit this call
+        if (req.user.audit === true) {
+            audit.create(req.user.userId, constants.OP_USER_LIST,
+                         "GET", JSON.stringify(user));
+        }
+                
         return res.status(200).json(_.omit(user, 'password'));
     } catch (ex) {
         logger.error(ex);

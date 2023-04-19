@@ -11,7 +11,7 @@ const constants = require('../utils/constants.js');
 async function prodCanUpsert(req, res, next) {
     try {
         if ( _.isUndefined(req.user.operations) === false &&
-            !req.user.operations.includes(constants.PROD_UPSERT)) {
+            !req.user.operations.includes(constants.OP_PROD_UPSERT)) {
             const msg = 'Forbidden upserting products';
             logger.error(msg);
             return res.status(403).send(msg);
