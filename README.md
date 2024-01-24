@@ -1,6 +1,6 @@
 # PRODUCTS-SRVC
 
-This is a sample and generic service to manage product informations and users that have access to product information.
+This is a sample and generic ecommerce service to manage product information.
 
 ## Product Information
 
