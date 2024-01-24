@@ -25,7 +25,7 @@ export function InitRoutes(app: Application) {
  * @param serverUrl
  */
 export function InitSwaggerDoc(app: Application, serverUrl: string) {
-    const serviceTitle = 'Discounted Products Service';
+    const serviceTitle = 'Product Management Service';
 
     const options: swaggerjsdoc.Options = {
         failOnErrors: true, // Whether or not to throw when parsing errors. Defaults to false.

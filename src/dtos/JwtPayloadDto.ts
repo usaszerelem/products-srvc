@@ -18,7 +18,7 @@
  *           description: Unique user identifier
  *         operations:
  *           type: array
- *           description: List of operations that this user is allowed to perform.
+ *           description: List of operations that this user is allowed to perform. This will change as soon as RBAC is added.
  *           items:
  *             type: string
  *             example: ["UserUpsert", "UserDelete", "UserList", "ProdUpsert", "ProdDelete", "ProdList"]
@@ -28,11 +28,11 @@
  *           example: false
  *         iat:
  *           type: number
- *           description: This is the time at which the JWT was created, and can be used to determine the age of the JWT.
+ *           description: Claim Issued At (iat). This is the time at which the JWT was created, and can be used to determine the age of the JWT.
  *           example: 1445714161
  *         exp:
  *           type: number
- *           description: Timestamp that indicates the expiration time of the JWT
+ *           description: Claim Expiration (exp). Timestamp that indicates the expiration time of the JWT
  *           example: 1445714161
  */
 

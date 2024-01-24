@@ -16,7 +16,6 @@ export const productFieldNames: string[] = [
     'sku',
     'name',
     'description',
-    'inStock',
     'stockQuantity',
     'purchasePrice',
     'salePrice',

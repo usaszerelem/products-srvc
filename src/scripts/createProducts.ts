@@ -32,7 +32,6 @@ async function createAllProducts(): Promise<void> {
                         sku: '',
                         name: '',
                         description: '',
-                        inStock: false,
                         stockQuantity: 0,
                         purchasePrice: 0,
                         salePrice: 0,
@@ -41,7 +40,7 @@ async function createAllProducts(): Promise<void> {
                         attributes: [],
                     };
 
-                    const csvColumns = 21;
+                    const csvColumns = 20;
 
                     for (let col: number = 1; col < csvColumns; col++) {
                         switch (col) {
@@ -77,22 +76,18 @@ async function createAllProducts(): Promise<void> {
                                 break;
 
                             case 5:
-                                prod.inStock = parseBool(row[col]);
-                                break;
-
-                            case 6:
                                 prod.stockQuantity = parseInt(row[col]);
                                 break;
 
-                            case 7:
+                            case 6:
                                 prod.purchasePrice = Number(row[col].replace(/[^0-9\.-]+/g, ''));
                                 break;
 
-                            case 8:
+                            case 7:
                                 prod.salePrice = Number(row[col].replace(/[^0-9\.-]+/g, ''));
                                 break;
 
-                            case 9:
+                            case 8:
                                 // Clothing>Men>Tops>Hoodies & Sweatshirts|Clothing>Collections>Eco Friendly|Clothing
                                 const categories: Array<string> = row[col].split('|');
 
@@ -102,7 +97,7 @@ async function createAllProducts(): Promise<void> {
 
                                 break;
 
-                            case 10:
+                            case 9:
                                 // http://eimages.valtim.com/acme-images/product/m/h/mh01-gray_main.jpg,http://eimages.valtim.com/acme-images/product/m/h/mh01-gray_alt1.jpg,http://eimages.valtim.com/acme-images/product/m/h/mh01-gray_back.jpg
                                 const images: Array<string> = row[col].split(',');
 
@@ -111,11 +106,11 @@ async function createAllProducts(): Promise<void> {
                                 });
                                 break;
 
-                            case 11:
-                            case 13:
-                            case 15:
-                            case 17:
-                            case 19:
+                            case 10:
+                            case 12:
+                            case 14:
+                            case 16:
+                            case 18:
                                 if (row[col].length > 0) {
                                     const kvp: KeyValue = {
                                         key: row[col],

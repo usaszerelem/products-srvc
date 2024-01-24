@@ -44,10 +44,6 @@ const productSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        inStock: {
-            type: Boolean,
-            required: true,
-        },
         stockQuantity: {
             type: Number,
             required: true,
@@ -83,7 +79,6 @@ export function validateProduct(product: typeof Product) {
         sku: Joi.string().min(Limits.SKU_MIN_LENGTH).max(Limits.SKU_MAX_LENGTH).required(),
         name: Joi.string().min(Limits.NAME_MIN_LENGTH).max(Limits.NAME_MAX_LENGTH).required(),
         description: Joi.string().min(Limits.DESC_MIN_LENGTH).max(Limits.DESC_MAX_LENGTH).required(),
-        inStock: Joi.boolean(),
         stockQuantity: Joi.number(),
         purchasePrice: Joi.number(),
         salePrice: Joi.number(),
