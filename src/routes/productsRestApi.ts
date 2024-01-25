@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import AppLogger from '../utils/Logger';
-import { Product, validateProduct } from '../models/product';
+import { Product, validateProduct, productFieldNames } from '../models/product';
 import _ from 'underscore';
 import { ErrorFormatter, ErrorToUserFriendly } from '../utils/ErrorFormatter';
 import { IProductDto } from '../dtos/IProductDto';
@@ -10,19 +10,6 @@ import isUndefOrEmpty from '../utils/isUndefOrEmpty';
 
 const logger = new AppLogger(module);
 const router = express.Router();
-
-export const productFieldNames: string[] = [
-    'isActive',
-    'sku',
-    'name',
-    'description',
-    'stockQuantity',
-    'purchasePrice',
-    'salePrice',
-    'categories',
-    'images',
-    'attributes',
-];
 
 /**
  * @swagger

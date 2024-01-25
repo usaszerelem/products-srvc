@@ -10,6 +10,19 @@ export namespace Limits {
     export const DESC_MAX_LENGTH = 600;
 }
 
+export const productFieldNames: string[] = [
+    'isActive',
+    'sku',
+    'name',
+    'description',
+    'stockQuantity',
+    'purchasePrice',
+    'salePrice',
+    'categories',
+    'images',
+    'attributes',
+];
+
 const attribSchema = new mongoose.Schema(
     {
         key: String,

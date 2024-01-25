@@ -4,6 +4,8 @@ import swaggerjsdoc from 'swagger-jsdoc';
 import swaggerui from 'swagger-ui-express';
 import { version } from '../../package.json';
 import products from '../routes/productsRestApi';
+import uploads from '../routes/uploads';
+import logs from '../routes/logs';
 
 export function InitRoutes(app: Application) {
     app.use(function (_req, res, next) {
@@ -13,6 +15,8 @@ export function InitRoutes(app: Application) {
     });
 
     app.use('/api/v1/products', products);
+    app.use('/api/v1/uploads', uploads);
+    app.use('/api/v1/logs', logs);
 
     // https://momentjs.com/docs/#/displaying/format/
     app.get('/', (_reg, res) => res.send(moment().format('dddd, MMMM Do YYYY, HH:mm:ss Z')));
