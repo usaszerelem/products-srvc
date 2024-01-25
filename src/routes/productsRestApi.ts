@@ -24,6 +24,42 @@ export const productFieldNames: string[] = [
     'attributes',
 ];
 
+/**
+ * @swagger
+ * /api/v1/products:
+ *   post:
+ *     tags:
+ *       - Products
+ *     summary: Create/Add a new Product
+ *     description: Create (register) a new product. This is a functionality exposed only to logged in user that has 'ProductUpsert' operational permission.
+ *     operationId: createProduct
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         required: true
+ *         description: Authentication token of the logged in user
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: Information about the product to create. Note that the product's unique identifier as well as the createdAt and updatedAt fields are not required, but these are returned as part of the response. See the IProductCreateDto schema for detailed information.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IProductDto'
+ *     responses:
+ *       '201':
+ *         description: Product created. The returned JSON contains the product's unique identifier as well as the createdAt and updatedAt fields.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IPagedDataReturnDto'
+ *       '403':
+ *         description: Forbidden upserting products
+ *       '409':
+ *         description: There is already a product with this UPC in the database.
+ *       '424':
+ *         description: Product information was saved but auditing is enabled and the audit server is not available.
+ */
 router.post('/', async (req: Request, res: Response) => {
     try {
         logger.debug('Inside POST, creating new product...');
@@ -53,6 +89,49 @@ router.post('/', async (req: Request, res: Response) => {
         return res.status(ret[0]).send(ret[1]);
     }
 });
+
+/**
+ * @swagger
+ * /api/v1/products/{id:}:
+ *   put:
+ *     tags:
+ *       - Products
+ *     summary: Update all fields for a Product type entity
+ *     description: Updates an existing Product's information. Updating can only be done by a logged in user that has 'ProductUpsert' operational permission.
+ *     operationId: putProduct
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         required: true
+ *         description: Authentication token of the logged in user
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         description: Unique product entity identifier to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: Information about the product to update.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IProductDto'
+ *     responses:
+ *       '200':
+ *         description: Product was updated. The returned JSON contains the updated product. Three additional fields are returned that are not shown below are the '_id', 'createdAt' and 'updatedAt' fields.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IProductDto'
+ *       '403':
+ *         description: Forbidden upserting products
+ *       '404':
+ *         description: Specified entity could not be found.
+ *       '424':
+ *         description: Product information was saved but auditing is enabled and the audit server is not available.
+ */
 
 router.put('/:id', async (req: Request, res: Response) => {
     try {
@@ -97,6 +176,48 @@ router.put('/:id', async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/v1/products{id:}:
+ *   patch:
+ *     tags:
+ *       - Products
+ *     summary: Update all or some fields for a Product type entity
+ *     description: Updates to selective fields only for an existing Produc. Updating can only be done by a logged in user that has 'ProductUpsert' operational permission.
+ *     operationId: patchProduct
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         required: true
+ *         description: Authentication token of the logged in user
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         description: Unique product entity identifier to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: Information about the product to update. At least one field from the below shown schema should be present. If all fields are provided then the 'patch' method is identical to the 'put' method.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IProductDto'
+ *     responses:
+ *       '200':
+ *         description: Product was updated. The returned JSON contains the product's unique identifier as well as the createdAt and updatedAt fields.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IProductDto'
+ *       '403':
+ *         description: Forbidden upserting products
+ *       '404':
+ *         description: Specified entity could not be found.
+ *       '424':
+ *         description: Product information was saved but auditing is enabled and the audit server is not available.
+ */
 router.patch('/:id', async (req: Request, res: Response) => {
     try {
         const prodId = req.params.id;
@@ -164,6 +285,41 @@ async function updateProductObject(entityId: string, newBody: any): Promise<IPro
     return productRet;
 }
 
+/**
+ * @swagger
+ * /api/v1/products/{:id}:
+ *   get:
+ *     tags:
+ *       - Products
+ *     summary: Get product information using the products's unique entity identifier.
+ *     description: A logged in user or a service account can obtain information about users only if this user has 'userCanList' operational access rights given to it.
+ *     operationId: getProductInfo
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         required: true
+ *         description: authentication token of the logged in user
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: id
+ *         required: false
+ *         description: Unique product id of the product whose information is requested. Provide either this or the the product's UPC number.
+ *         example: 64bf5ba4d0c8d93ad3ea47e3
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Array of found products that met the criterie.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IProductDto'
+ *       '400':
+ *         description: Invalid token/Bad Request
+ *       '424':
+ *         description:  Product information was retrieved, but auditing is enabled and the Audit server is not available.
+ */
 router.get('/:id', async (req: Request, res: Response) => {
     try {
         const prodId = req.params.id;
@@ -188,6 +344,72 @@ router.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/v1/products:
+ *   get:
+ *     tags:
+ *       - Products
+ *     summary: Retrieves a list of products using any of the products's properties as a query parameter. As an example all products with 'ABC' in the 'sku' field. Maximum 100 products can be requested in one call.
+ *     description: A logged in user or a service account can retreive information about several products in one call. This greatly improves efficiency. Loggen in users with 'userCanList' operational access rights can make this call.
+ *     operationId: getProductInfo
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         required: true
+ *         description: authentication token of the logged in user
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: pageSize
+ *         required: false
+ *         description: Maximum number of products to return in one page. If not specified the default value of 10 is used.
+ *         example: 10
+ *         schema:
+ *           type: number
+ *       - in: query
+ *         name: pageNumber
+ *         required: false
+ *         description: The specific page number of pageSize items that is requested. If not specified the default value of 1 is used.
+ *         example: 1
+ *         schema:
+ *           type: number
+ *       - in: query
+ *         name: sortBy
+ *         required: false
+ *         description: In case there is an interest to sort the returned information by a product property, specify the property name here.
+ *         example: upc
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: Optionally the list of fields to retrieve. This way the caller can specify exactly what it needs and only that information is returned.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             description: Categories that this product belongs to.
+ *             properties:
+ *               select:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *             items:
+ *               type: string
+ *             example: { "select": ["_id", "sku", "name", "description"] }
+ *     responses:
+ *       '200':
+ *         description: Found the requested product. All product details are in the body of the response.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IProductsFilterResponse'
+ *       '400':
+ *         description: Invalid token/Bad Request
+ *       '413':
+ *         description: Payload too large. Max page size allowed is 100
+ *       '424':
+ *         description:  Product information was retrieved, but auditing is enabled and the Audit server is not available.
+ */
 router.get('/', async (req: Request, res: Response) => {
     try {
         logger.debug(`Product GET request`);
@@ -205,6 +427,50 @@ router.get('/', async (req: Request, res: Response) => {
         return res.status(500).send(msg);
     }
 });
+
+/**
+ * @swagger
+ * /api/v1/products/{:id}:
+ *   delete:
+ *     tags:
+ *       - Products
+ *     summary: Delete a product from the database using its unique entity ID
+ *     description: A logged in user can delete a product only if this user has 'ProdDelete' operational access rights given to it.
+ *     operationId: deleteProduct
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         required: true
+ *         description: authentication token of the logged in user
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: entityId
+ *         required: true
+ *         example: 64a8c7eb35ae986c434b0b1a
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: hardDelete
+ *         required: false
+ *         description: Optional boolean value that specifies whether a soft or a hard delete is requested. By default a soft delete is performed.
+ *         example: false
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Product deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IProductDto'
+ *       '400':
+ *         description: Invalid token.
+ *       '404':
+ *         description: Not found
+ *       '424':
+ *         description: Product was deleted, but auditing is enabled and the Audit server is not available.
+ */
 
 router.delete('/:id', async (req: Request, res: Response) => {
     try {

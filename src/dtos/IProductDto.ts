@@ -92,3 +92,52 @@ export type IProductDto = {
     createdAt?: string;
     updatedAt?: string;
 };
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     IProductsFilterResponse:
+ *       type: object
+ *       description: Paging information about requested products. The array of products only contains the requested product fields and the information is sorted by the specified field.
+ *       properties:
+ *         pageSize:
+ *           type: number
+ *           example: 10
+ *           description: Maximum number of entities that this page can contain.
+ *         pageNumber:
+ *           type: number
+ *           example: 2
+ *           description: Requested page number of entities.
+ *         _links:
+ *           type: object
+ *           properties:
+ *             base:
+ *               type: string
+ *               example: "http://localhost:3000/api/v1/products"
+ *               description: Base URL to use for retrieving products information
+ *             prev:
+ *               type: string
+ *               example: "http://localhost:3000/api/v1/products?pageSize=10&pageNumber=1"
+ *               description: URL to use to retreive the previous page with products information. This property is only returned if there is a previous page with information, therebody allowing the UI to enable/disable paging controls.
+ *             next:
+ *               type: string
+ *               example: "http://localhost:3000/api/v1/products?pageSize=10&pageNumber=3"
+ *               description: URL to use to retreive the next page with products information. This property is only returned if there is a next page with information, therebody allowing the UI to enable/disable paging controls.
+ *         results:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/IProductDto'
+ */
+
+export interface IProductsFilterResponse {
+    pageSize: number;
+    pageNumber: number;
+    _links: {
+        base: string;
+        next?: string;
+        prev?: string;
+    };
+
+    results: IProductDto[];
+}
